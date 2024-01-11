@@ -12,6 +12,7 @@ import imutils
 import util.gaze
 from imutils import face_utils
 import math
+import keyboard
 
 from util.eye_prediction import EyePrediction
 from util.eye_sample import EyeSample
@@ -45,9 +46,16 @@ def main():
     alpha = 0.95
     left_eye = None
     right_eye = None
+    stop_flag = False
 
-    while True:
-        print("running")
+    while stop_flag == False:
+        print("  ")
+        
+        if keyboard.is_pressed('space'):
+            stop_flag = True
+            print("Program stopped.")
+            break
+    
         _, frame_bgr = webcam.read()
         orig_frame = frame_bgr.copy()
         frame = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
@@ -100,9 +108,10 @@ def main():
                 if ep.eye_sample.is_left:
                     gaze[1] = -gaze[1]
                 util.gaze.draw_gaze(orig_frame, ep.landmarks[-2], gaze, length=60.0, thickness=2)
-
+        
         cv2.imshow("Webcam", orig_frame)
         cv2.waitKey(1)
+
 
 
 def detect_landmarks(face, frame, scale_x=0, scale_y=0):
